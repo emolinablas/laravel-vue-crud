@@ -1,0 +1,29 @@
+{
+    "name": "emolinablas/laravel-vue-crud",
+    "description": "Laravel Crud with Vue",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ever Molina",
+            "email": "moulinaem@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Emolinablas\\LaravelVueCrud\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Emolinablas\\LaravelVueCrud\\LaravelVueCrudServiceProvider"
+            ],
+            "aliases": {
+                "Vuecrud": "Emolinablas\\LaravelVueCrud\\Facades\\LaravelVueCrud"
+            }
+        }
+    }
+}
