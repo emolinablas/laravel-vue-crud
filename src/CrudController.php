@@ -6,32 +6,132 @@ use App\Http\Controllers\Controller;
 
 use App\Events\GraficasProyeccion;
 use App\Events\ProductAdded;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 class CrudController extends Controller
 {
+    private static $userId;
     private static $tabla;
     private static $tablaId;
     private static $titulo;
 
+    private static $menu            = [];
+
     private static $colSlug;
-    private static $separatorSlug = '-';
+    private static $separatorSlug   = '-';
 
-    private static $camposShow = [];
-    private static $camposEdit = [];
+    private static $camposShow      = [];
+    private static $camposEdit      = [];
+    private static $wheres          = [];
+    private static $afterWheres     = [];
+    private static $wheresRaw       = [];
+    private static $lefJoins        = [];
+    private static $botonesExtra    = [];
+    private static $links           = [];
+    private static $subTablas       = [];
+    private static $orders          = [];
+    private static $groups          = [];
 
-    private static $wheres = [];
-    private static $wheresRaw = [];
-    private static $lefJoins = [];
+    private static $template        = 'layouts/app';
 
-    private static $botonesExtra = [];
-    private static $subTablas = [];
-    private static $orders = [];
-    private static $groups = [];
+    private static $buttonNew       = ['component' => ''];
 
-    private static $template = 'layouts/app';
+    private static $permissions =
+        [
+            'create' => true,
+            'edit'   => true,
+            'delete' => true,
+        ];
+
+    public function setUserId($userId){
+        self::$userId = $userId;
+    }
+
+    public function getUserId(){
+        return self::$userId;
+    }
+
+
+    public function setWhere($field1, $operator, $field2)
+    {
+
+        $where = ['field1' => $field1, 'operator' => $operator, 'field2' => $field2];
+
+        self::$wheres[] = $where;
+        return $this;
+    }
+
+    public function getWheres()
+    {
+        return self::$wheres;
+    }
+
+    public function setAfterWhere($field1, $operator, $variable, $tipo)
+    {
+
+        $where = ['field1' => $field1, 'operator' => $operator, 'variable' => $variable, 'tipo' => $tipo];
+
+        self::$wheres[] = $where;
+        return $this;
+    }
+
+    public function getAfterWheres()
+    {
+        return self::$wheres;
+    }
+
+    public function setLink($link)
+    {
+        self::$links[] = $link;
+        return $this;
+    }
+
+    public function getLinks()
+    {
+        return self::$links;
+    }
+
+    public function setPermissions($permissions)
+    {
+        self::$permissions = $permissions;
+        return $this;
+    }
+
+    public function setSpecificPermission($index, $value)
+    {
+        self::$permissions[$index] = $value;
+    }
+
+    public function getPermissions()
+    {
+        return self::$permissions;
+    }
+
+    public function setButtonNew($buttonNew)
+    {
+        self::$buttonNew = $buttonNew;
+        return $this;
+    }
+
+    public function getButtonNew()
+    {
+        return self::$buttonNew;
+    }
+
+    public function setMenu($menu)
+    {
+        self::$menu = $menu;
+        return $this;
+    }
+
+    public function getMenu()
+    {
+        return self::$menu;
+    }
 
     public function setLeftJoin($tabla, $campo1, $operador,  $campo2) {
         self::$lefJoins[] = ['tabla' => $tabla, 'campo1' => $campo1, 'operador' => $operador, 'campo2' => $campo2 ];
@@ -62,13 +162,31 @@ class CrudController extends Controller
         return self::$botonesExtra;
     }
 
+    public function restrictBotonExtra($componente) {
+
+        foreach (self::$botonesExtra as $key => $botonExtra) {
+            if($botonExtra['componente'] == $componente) {
+                array_splice(self::$botonesExtra,$key,1);
+            }
+        }
+
+    }
+
     public function setCampo(array $campo)
     {
+
+        if(!isset($campo['rules'])) {
+            $campo['rules'] = '';
+        }
 
         if($campo['type'] == 'numeric') {
             if(!isset($campo['decimales'])) {
                 $campo['decimales'] = 0;
             }
+        }
+
+        if(!isset($campo['disabled'])) {
+            $campo['disabled'] = false;
         }
 
 
@@ -90,10 +208,18 @@ class CrudController extends Controller
                     ->get()->toArray();
 
                 $campo['values'] = $values;
+            } else if($campo['type'] == 'enum') {
+                $values = [];
+                foreach ($campo['options'] as $key => $value) {
+
+                    $values[] = ['value' => $value, 'text' => $key];
+                }
+                $campo['values'] = $values;
             }
 
             self::$camposEdit[] = $campo;
         }
+
 
         return $this;
     }
@@ -165,8 +291,9 @@ class CrudController extends Controller
         } else if(request()->has('getDatos')) {
 
 
-            $columns = json_decode(request()->input('camposShow'));
-            $leftJoins = json_decode(request()->input('leftJoins'));
+            $columns    = json_decode(request()->input('camposShow'));
+            $leftJoins  = json_decode(request()->input('leftJoins'));
+            $wheres     = json_decode(request()->input('wheres'));
 
             //dd($columns);
 
@@ -183,6 +310,8 @@ class CrudController extends Controller
                 if($c->type == 'select') {
                     $query->addSelect(DB::raw($c->{'campo-edit'} . ' as `' . $c->{'campo-edit'}.'` '));
                 }
+
+                $query->addSelect(DB::raw("'".$c->type."' as  `tcc".$c->as.'` '));
             }
 
             if(count($leftJoins) > 0 ) {
@@ -194,29 +323,108 @@ class CrudController extends Controller
             $query->addSelect(request()->input('tabla').'.'.request()->input('tablaid'));
 
 
-                $query->groupBy(request()->input('tabla').'.'.request()->input('tablaid'));
 
-                $query->orderBy($columns[$column]->campo, $dir);
+            $query->groupBy(request()->input('tabla').'.'.request()->input('tablaid'));
+
+                $query->orderBy($columns[$column]->as, $dir);
 
             if ($searchValue) {
                 $query->where(
-                    function ($query) use ($searchValue) {
-                        $query->where('nombre', 'like', '%' . $searchValue . '%')
-                            ->orWhere('stock', 'like', '%' . $searchValue . '%');
+                    function ($query) use ($searchValue, $columns) {
+                        $query->where(request()->input('tabla').'.'.request()->input('tablaid'), 'like', '%' . $searchValue . '%');
+
+                        foreach($columns as $c) {
+                            $query->orWhere($c->as, 'like', '%' . $searchValue . '%');
+                        }
                     }
                 );
+            }
+
+            if(count($wheres) > 0) {
+                foreach ($wheres as $w) {
+                    $query->where($w->field1, $w->operator, $w->field2);
+
+                }
             }
 
             $projects = $query->paginate($length);
 
             //dd($projects);
 
-            return response()->json(['data' => $projects, 'draw' => request()->input('draw')]);
+            return response()->json(['data' => $projects, 'botonesExtra' => $this->getBotonesExtra(), 'draw' => request()->input('draw')]);
         } else {
 
             //dd($this->getCampoEdit());
 
+            //verificamos si existe la tabla permiso
+            try {
+                $isPermisos = Schema::hasTable('permiso');
+            } catch (\Exception $e) {
+                $isPermisos = false;
+            }
+
+            //si existe entonces
+            if($isPermisos) {
+                $permiso = $this->getPermisoByModulo('/'. Route::current()->uri(),auth()->user()->rolid);
+
+                //verificamos si el usuario tiene permisos para este modulo
+                if( $permiso != null) {
+
+                    //procedemos a verificar si tiene alguna restriccion
+                    try {
+                        $isRestricciones = Schema::hasTable('restriccionesusuario');
+                    } catch (\Exception $e) {
+                        $isRestricciones = false;
+                    }
+
+                    //si existe la tabla restricciones seguimos evaluando
+                    if ($isRestricciones) {
+
+                        $restricciones = DB::table('restriccionesusuario as r')
+                            ->leftJoin('restriccionusuariotipo as rt', 'rt.restriccionusuariotipoid', 'r.restriccionusuariotipoid' )
+                            ->where('usersid', auth()->user()->id)
+                            ->where('permisoid', $permiso->permisoid)
+                            ->get();
+
+                        //si tiene por lo menos alguna restriccion
+                        if (count($restricciones) > 0) {
+
+
+                            foreach ($restricciones as $restriccion) {
+
+                                switch ($restriccion->nombre) {
+                                    case 'show':
+                                        //si tiene restringido ver la lista entonces abortamos
+                                        abort(403, 'Unauthorized action.');
+                                        break;
+
+                                    case 'create':
+                                        $this->setSpecificPermission('create', false);
+                                        break;
+                                    case 'edit':
+                                        $this->setSpecificPermission('edit', false);
+                                        break;
+
+                                    case 'delete':
+                                        $this->setSpecificPermission('delete', false);
+                                        break;
+
+                                    case 'botonextra':
+                                        $this->restrictBotonExtra($restriccion->componente);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    abort(403, 'Unauthorized action.');
+                }
+            }
+
+
+
             return view('laravel-vue-crud::crud.index')
+                ->with('title', $this->getTitulo())
                 ->with('urlEdit', '/'. Route::current()->uri())
                 ->with('urlRuta', '/'. Route::current()->uri().'?getDatos=true')
                 ->with('tabla', $this->getTabla())
@@ -226,8 +434,24 @@ class CrudController extends Controller
                 ->with('leftJoins', $this->getLeftJoins())
                 ->with('subTablas', $this->getSubTablas())
                 ->with('botonesExtra', $this->getBotonesExtra())
+                ->with('menu', $this->getMenu())
+                ->with('buttonNew', $this->getButtonNew())
+                ->with('permissions', $this->getPermissions())
+                ->with('links', $this->getLinks())
+                ->with('wheres', $this->getWheres())
                 ;
         }
+    }
+
+    public function getPermisoByModulo($uri, $rolid) {
+        $p = DB::table('permiso as p')
+            ->select('permisoid')
+            ->leftJoin('modulo as m', 'm.moduloid', '=', 'p.moduloid')
+            ->where('rolid', $rolid)
+            ->where('m.ruta', $uri)->first();
+
+        return $p;
+
     }
 
     /**
@@ -250,8 +474,14 @@ class CrudController extends Controller
     {
         //dd(request()->all());
 
+        //if()
+            //return response()->json(['respuesta' => true, 'mensaje' =>  'Lo sentimos no se pudo guardar, intenta nuevamente.']);
+
         $toUpdate   = [];
+        $toUpdate['updated_at'] = Carbon::now();
         $toInsert   = [];
+        $toInsert['created_at'] = Carbon::now();
+        $toInsert['updated_at'] = Carbon::now();
         $campos     = json_decode(request()->input('datos'));
 
         foreach ($campos as $c) {

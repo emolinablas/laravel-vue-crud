@@ -37,50 +37,30 @@
                     @guest
                     @else
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/home">Dashboard</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                Catálogos <span class="caret"></span>
-                            </a>
 
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/admin/inventario">
-                                    Inventarios
-                                </a>
-                                <a class="dropdown-item" href="/admin/equipo">
-                                    Equipos
-                                </a>
-                                <a class="dropdown-item" href="/admin/empleado">
-                                    Empleados
-                                </a>
-                            </div>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                Producciones <span class="caret"></span>
-                            </a>
+                        @foreach(request()->session()->get('menuLateral', []) as $m)
+                            @if(count($m->hijos) > 0)
 
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">
-                                    Producción por bolsa
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    Producción por ubicación
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    Producción por persona
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    Precio por producción
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    Devoluciones
-                                </a>
-                            </div>
+                                <li class="nav-item dropdown">
+                                    <a id="{{$m->ruta}}" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                        {{$m->nombre}} <span class="caret"></span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{$m->ruta}}">
+                                        @foreach($m->hijos as $h)
+                                            <a class="dropdown-item" href="{{$h->ruta}}">
+                                                {{$h->nombre}}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </li>
 
-                        </li>
+                            @else
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{$m->ruta}}">{{$m->nombre}}</a>
+                                </li>
+                            @endif
+                        @endforeach
+
                     </ul>
                     @endguest
 

@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container">
+        <h2>{{$title}}</h2>
         <crud-component
                 url-ruta="{{$urlRuta}}"
                 url-edit="{{$urlEdit}}"
@@ -13,6 +14,10 @@
                 :sub-tablas="{{ json_encode($subTablas) }}"
                 :botones-extra="{{ json_encode($botonesExtra) }}"
                 usersid="{{ encrypt(auth()->user()->id) }}"
+                :button-new="{{ json_encode($buttonNew)  }}"
+                :permissions="{{ json_encode($permissions) }}"
+                :links="{{ json_encode($links) }}"
+                :wheres="{{ json_encode($wheres) }}"
         >
         </crud-component>
     </div>

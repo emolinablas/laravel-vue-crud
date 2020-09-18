@@ -11,45 +11,65 @@
                        @input="getProjects()">
             </div>
             <div class="col-sm-3">
-                <button type="button" class="btn btn-success btn-block btn-xs" data-toggle="modal" data-target="#staticBackdrop">
+                <button v-if="buttonNew.component === '' && permissions.create" v-on:click="crearNuevo()" type="button" class="btn btn-success btn-block btn-xs" data-toggle="modal" data-target="#staticBackdrop">
                     Nuevo
                 </button>
+
+                <b-button v-if="buttonNew.component !== '' && permissions.create" variant="success" size="md" block v-b-modal="'buttonNew'">
+                    Nuevo
+                </b-button>
+                <b-modal v-if="buttonNew.component !== '' && permissions.create" size="lg"
+
+                         id="buttonNew"
+                         title="Nuevo"
+                         ok-only ok-variant="secondary" ok-title="Cancel"
+                >
+
+                    <component @event="actualizarProyectos" @titulomodal="actualizarTituloModal" :is="buttonNew.component"  :data="buttonNew.data" :usersid="usersid">
+
+                    </component>
+                </b-modal>
+
             </div>
         </div>
         <hr>
         <datatable :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders" @sort="sortBy">
             <tbody>
             <tr v-for="(project, index) in projects" :key="project.id">
-                <td v-for="campoShow in camposShow">{{project[campoShow.as]}}</td>
+                <td v-for="campoShow in camposShow">
+                    {{(project['tcc'+campoShow.as] === 'checkbox')?((project[campoShow.as] == 1)?'SI':'NO'):project[campoShow.as]}}
+                </td>
                 <td>
                     <div class="float-right">
+                        <a v-for="link in links" :target="link.target" :key="'button-link-'+project.id+index" :href="link.ruta+'?id='+project[tablaid]"><b-button :style="{ marginRight: '5px' }"  pill :variant="link.variant" size="sm">{{ link.etiqueta }}</b-button></a>
 
-                        <b-button :style="{ marginRight: '5px' }" v-for="botonExtra in botonesExtra" :key="'button-modal-'+botonExtra.componente+index" :variant="botonExtra.variant" v-b-modal="'modal-boton-extra-'+botonExtra.componente+index" >
+                        <b-button :style="{ marginRight: '5px' }" v-for="botonExtra in botonesExtraLocal" :key="'button-modal-'+botonExtra.componente+index" :variant="botonExtra.variant" v-b-modal="'modal-boton-extra-'+botonExtra.componente+index" size="sm" >
                             {{ botonExtra.etiqueta }}
                         </b-button>
+
                         <b-modal :size="botonExtra.size"
-                                 v-for="botonExtra in botonesExtra"
+                                 v-for="botonExtra in botonesExtraLocal"
                                  :key="'modal-'+botonExtra.componente+index"
                                  :id="'modal-boton-extra-'+botonExtra.componente+index"
-                                 :title="botonExtra.etiqueta + ' | ' + project[tabla+'.'+botonExtra.campoNombre]"
+                                 :title="botonExtra.etiqueta + ' | ' + project[tabla+'.'+botonExtra.campoNombre]+' | '+tituloModal"
                                  ok-only ok-variant="secondary" ok-title="Cancel"
                         >
 
-                            <component @event="actualizarProyectos" :is="botonExtra.componente" :id-row="project[tablaid]"  :data="botonExtra.data" :usersid="usersid">
+                            <component @event="actualizarProyectos" @titulomodal="actualizarTituloModal" :is="botonExtra.componente" :id-row="project[tablaid]"  :data="botonExtra.data" :usersid="usersid">
 
                             </component>
                         </b-modal>
 
-                        <button v-on:click="setSubTablaActual(subTabla, index)" v-for="subTabla in subTablas" type="button" class="btn btn-outline-primary btn-xs" data-toggle="modal" data-target="#staticBackdropSubTablas">
+                        <button v-on:click="setSubTablaActual(subTabla, index)" v-for="subTabla in subTablas" type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#staticBackdropSubTablas">
                             {{ subTabla.etiqueta }}
                         </button>
 
-                        <button v-on:click="getProjectActual(index)" type="button" class="btn btn-outline-primary btn-xs" data-toggle="modal" data-target="#staticBackdrop">
-                            Editar
+                        <button v-if="permissions.edit" v-on:click="getProjectActual(index)" type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop">
+                            <b-icon-pencil></b-icon-pencil>
                         </button>
 
-                        <button class="btn btn-outline-danger btn-xs" v-on:click="eliminar(project[tablaid])">
-                            Eliminar
+                        <button v-if="permissions.delete" class="btn btn-outline-danger btn-sm" v-on:click="eliminar(project[tablaid])">
+                            <b-icon-trash></b-icon-trash>
                         </button>
                     </div>
                 </td>
@@ -75,12 +95,61 @@
                         <form action="">
                             <div v-for="(campoEdit, index) in camposEdit" v-bind:class="{'d-none form-group': campoEdit.campo === tablaid,  'form-group': campoEdit.campo !== 0}" >
                                 <div class="form-group">
-                                    <label>{{ campoEdit.nombre }}</label>
-                                    <input v-if="campoEdit.type == 'string'" v-model="camposEditLocal[index].valor"  class="form-control" type="text">
-                                    <input v-else-if="campoEdit.type == 'numeric'" v-model="camposEditLocal[index].valor"    class="form-control" type="number">
-                                    <input v-else-if="campoEdit.type == 'check'" type="checkbox" v-model="camposEditLocal[index].valor">
+                                    <ValidationProvider :name="campoEdit.nombre" v-slot="{ errors, valid }" :rules="campoEdit.rules">
+                                        <b-form-group
+                                                id="fieldset-descripcion"
+                                                :label="campoEdit.nombre"
+                                                label-for="input-descripcion"
+                                                :invalid-feedback="(errors[0] != null)?errors[0]:'*'"
+                                                :valid-feedback="'Válido'"
+                                                :state="valid"
 
-                                    <b-form-select v-else-if="campoEdit.type == 'select'" id="select-empleados" v-model="camposEditLocal[index].valorid" :options="camposEditLocal[index].values"></b-form-select>
+                                        >
+
+                                        <input v-if="campoEdit.type === 'string'"
+                                               v-model="camposEditLocal[index].valor"
+                                               class="form-control"
+                                               :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                               type="text">
+                                        <input v-else-if="campoEdit.type === 'numeric'"
+                                               v-model="camposEditLocal[index].valor"
+                                               class="form-control"
+                                               :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                               type="number">
+                                        <input v-else-if="campoEdit.type === 'check'"
+                                               type="checkbox"
+                                               :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                               v-model="camposEditLocal[index].valor">
+                                        <b-form-datepicker v-else-if="campoEdit.type === 'date'"
+                                                           v-model="camposEditLocal[index].valor"
+                                                           :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                                           locale="es" ></b-form-datepicker>
+
+                                        <b-form-select v-else-if="campoEdit.type == 'select'"
+                                                       v-model="camposEditLocal[index].valorid"
+                                                       :options="camposEditLocal[index].values"
+                                                       :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                        ></b-form-select>
+
+                                        <b-form-select v-else-if="campoEdit.type == 'enum'"
+                                                       v-model="camposEditLocal[index].valor"
+                                                       :options="camposEditLocal[index].values"
+                                                       :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                        ></b-form-select>
+
+                                        <b-form-checkbox v-else-if="campoEdit.type = 'checkbox'"
+                                                v-model="camposEditLocal[index].valor"
+                                                name="checkbox-1"
+                                                value="1"
+                                                unchecked-value="0"
+                                        >
+
+                                        </b-form-checkbox>
+
+                                    </b-form-group>
+                                    </ValidationProvider>
+
+
 
 
                                 </div>
@@ -88,7 +157,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <div v-if="mostrarMensaje" class="alert alert-success" role="alert">
+                        <div v-if="mostrarMensaje" :class="'alert alert-'+mensajeTipo" role="alert">
                             {{ mensaje }}
                         </div>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -140,7 +209,7 @@
     import Datatable from './Datatable.vue';
     import Pagination from './Pagination.vue';
     export default {
-        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'leftJoins', 'subTablas', 'botonesExtra', 'usersid'],
+        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'leftJoins', 'subTablas', 'botonesExtra', 'usersid',  'buttonNew', 'permissions','links', 'wheres'],
         components: { datatable: Datatable, pagination: Pagination},
         mounted: function () {
             $(this.$refs.vuemodal).on("hidden.bs.modal", this.alCerrarElModal);
@@ -169,6 +238,7 @@
                 sortOrders[column.name] = -1;
             });
             return {
+                tituloModal: "",
                 subTablaActual: {
                     rowsRecibidas: [
                         {
@@ -178,6 +248,7 @@
                 },
                 subTablaActualEtiqueta:"",
                 mensaje : "",
+                mensajeTipo: "success",
                 mensajeSubTablas : "",
                 mensajeExterno: "",
                 mostrarMensajeExterno: false,
@@ -186,6 +257,7 @@
                 projectActual: 0,
                 idActual: 0,
                 camposEditLocal: this.camposEdit,
+                botonesExtraLocal: this.botonesExtra,
                 enviandoDatos: false,
                 projects: [],
                 columns: columns,
@@ -202,7 +274,8 @@
                     camposShow: JSON.stringify(this.camposShow),
                     tabla: this.tabla,
                     tablaid: this.tablaid,
-                    leftJoins: JSON.stringify(this.leftJoins)
+                    leftJoins: JSON.stringify(this.leftJoins),
+                    wheres: JSON.stringify(this.wheres)
                 },
                 pagination: {
                     lastPage: '',
@@ -238,6 +311,18 @@
             }*/
         },
         methods: {
+            actualizarTituloModal(titulo){
+                this.tituloModal = titulo;
+            },
+            crearNuevo() {
+              this.idActual = 0;
+              var vm = this;
+                this.camposEditLocal.forEach(function (element2, index2, array) {
+                    if(vm.idActual === 0) {
+                        element2['valor'] = "";
+                    }
+                });
+            },
             actualizarProyectos() {
                 this.getProjects();
             },
@@ -286,24 +371,27 @@
                 //console.log(this.tablaid);
               this.idActual = actual[this.tablaid];
 
-
+                //var vm = this;
               this.camposEditLocal.forEach(function (element2, index2, array) {
+                  //console.log(this.idActual);
                   for (var key in element2) {
                       // skip loop if the property is from prototype
                       if (!element2.hasOwnProperty(key)) continue;
 
                       var obj = element2[key];
 
-                      if(key == 'campo') {
+                      if(key === 'campo') {
                           element2['valor'] = actual[obj];
                       }
 
-                      if(key == 'type') {
+
+
+                      if(key === 'type') {
                           //console.log(element2[key]);
                           if(element2[key] == 'select') {
                               element2['valorid'] = actual[element2['campo-edit']];
 
-                              console.log(element2);
+                              //console.log(element2);
                           }
                       }
                   }
@@ -357,6 +445,7 @@
 
                         if(data.respuesta) {
                             vm.mensaje = data.mensaje;
+                            vm.mensajeTipo = "success";
                             vm.mostrarMensaje = true;
                             this.getProjects();
                         }
@@ -364,17 +453,25 @@
                         vm.enviandoDatos = false;
                     })
                     .catch(errors => {
-                        console.log(errors);
+                        vm.mensaje = "Lo sentimos ocurrio un error: "+errors;
+                        vm.mensajeTipo = "danger";
+                        vm.mostrarMensaje = true;
                         vm.enviandoDatos = false;
                     });
             },
             getProjects(url = this.urlRuta) {
                 this.tableData.draw++;
-                axios.get(url, {params: this.tableData})
+                var vm = this;
+                axios.get(url, {
+                    params: this.tableData,
+                    usersid: this.usersid
+                })
                     .then(response => {
                         let data = response.data;
                         if (this.tableData.draw == data.draw) {
+                            //console.log(data);
                             this.projects = data.data.data;
+                            vm.botonesExtraLocal = data.botonesExtra;
                             this.configPagination(data.data);
                         }
                     })

@@ -12,7 +12,7 @@
     "devDependencies": {
         "axios": "^0.19",
         "bootstrap": "^4.5.0",
-        "cross-env": "^7.0",
+        "cross-env": "^7.0.2",
         "jquery": "^3.2",
         "laravel-mix": "^5.0.1",
         "lodash": "^4.17.13",
@@ -36,6 +36,8 @@
         "jszip": "^3.5.0",
         "laravel-echo": "^1.8.0",
         "pdfmake": "^0.1.65",
-        "pusher-js": "^5.1.1"
+        "pusher-js": "^5.1.1",
+        "vee-validate": "^3.3.9",
+        "vue-select": "^3.10.7"
     }
 }
