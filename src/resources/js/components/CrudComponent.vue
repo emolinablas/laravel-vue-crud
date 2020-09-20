@@ -92,7 +92,8 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="">
+                        <ValidationObserver v-slot="{ invalid }" tag="form">
+
                             <div v-for="(campoEdit, index) in camposEdit" v-bind:class="{'d-none form-group': campoEdit.campo === tablaid,  'form-group': campoEdit.campo !== 0}" >
                                 <div class="form-group">
                                     <ValidationProvider :name="campoEdit.nombre" v-slot="{ errors, valid }" :rules="campoEdit.rules">
@@ -154,18 +155,17 @@
 
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <div v-if="mostrarMensaje" :class="'alert alert-'+mensajeTipo" role="alert">
-                            {{ mensaje }}
-                        </div>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button v-if="!enviandoDatos" v-on:click="guardarDatos" type="button" class="btn btn-primary">Guardar Datos</button>
-                        <button v-else class="btn btn-secondary" type="button" disabled>
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            Enviando pedido...
-                        </button>
+                            <div v-if="mostrarMensaje" :class="'alert alert-'+mensajeTipo" role="alert">
+                                {{ mensaje }}
+                            </div>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button v-if="!enviandoDatos" v-on:click="guardarDatos" type="button" class="btn btn-primary" :disabled="invalid">Guardar Datos</button>
+                            <button v-else class="btn btn-secondary" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Enviando pedido...
+                            </button>
+
+                        </ValidationObserver>
                     </div>
                 </div>
             </div>

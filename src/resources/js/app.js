@@ -26,6 +26,7 @@ Vue.component('v-select', vSelect);
 import 'vue-select/dist/vue-select.css';
 
 import { ValidationProvider } from 'vee-validate';
+import { ValidationObserver } from 'vee-validate';
 
 import { extend } from 'vee-validate';
 import * as rules from 'vee-validate/dist/rules';
@@ -40,6 +41,7 @@ Object.keys(rules).forEach(rule => {
 
 // Register it globally
 Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
 
 // import $ from 'jquery';
 // import dt from 'datatables.net';
