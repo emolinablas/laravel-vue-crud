@@ -25,6 +25,7 @@ class CrudController extends Controller
     private static $separatorSlug   = '-';
 
     private static $camposShow      = [];
+    private static $camposTodos     = [];
     private static $camposEdit      = [];
     private static $wheres          = [];
     private static $afterWheres     = [];
@@ -199,6 +200,8 @@ class CrudController extends Controller
             self::$camposShow[] = $campo;
         }
 
+        self::$camposTodos[] = $campo;
+
         if($campo['edit']) {
             $campo['valor'] = "";
 
@@ -226,6 +229,10 @@ class CrudController extends Controller
 
     public function getCamposShow() {
         return self::$camposShow;
+    }
+
+    public function getCamposTodos() {
+        return self::$camposTodos;
     }
 
     public function getCampoEdit() {
@@ -291,11 +298,14 @@ class CrudController extends Controller
         } else if(request()->has('getDatos')) {
 
 
-            $columns    = json_decode(request()->input('camposShow'));
-            $leftJoins  = json_decode(request()->input('leftJoins'));
-            $wheres     = json_decode(request()->input('wheres'));
+            $columns        = json_decode(request()->input('camposShow'));
+            $camposTodos    = json_decode(request()->input('camposTodos'));
+            $leftJoins      = json_decode(request()->input('leftJoins'));
+            $wheres         = json_decode(request()->input('wheres'));
 
-            //dd($columns);
+
+
+            //dd($columnsNew);
 
             $length = request()->input('length');
             $column = request()->input('column'); //Index
@@ -304,7 +314,7 @@ class CrudController extends Controller
 
             $query = DB::table(request()->input('tabla'));
 
-            foreach ($columns as $c) {
+            foreach ($camposTodos as $c) {
                 $query->addSelect(DB::raw($c->campo . ' as `' . $c->as.'` '));
 
                 if($c->type == 'select') {
@@ -430,6 +440,7 @@ class CrudController extends Controller
                 ->with('tabla', $this->getTabla())
                 ->with('tablaid', $this->getTablaId())
                 ->with('camposShow', $this->getCamposShow())
+                ->with('camposTodos', $this->getCamposTodos())
                 ->with('camposEdit', $this->getCampoEdit())
                 ->with('leftJoins', $this->getLeftJoins())
                 ->with('subTablas', $this->getSubTablas())

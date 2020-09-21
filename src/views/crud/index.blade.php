@@ -9,6 +9,7 @@
                 tabla="{{$tabla}}"
                 tablaid="{{$tablaid}}"
                 :campos-show="{{ json_encode($camposShow) }}"
+                :campos-todos="{{ json_encode($camposTodos) }}"
                 :campos-edit="{{ json_encode($camposEdit) }}"
                 :left-joins="{{ json_encode($leftJoins) }}"
                 :sub-tablas="{{ json_encode($subTablas) }}"

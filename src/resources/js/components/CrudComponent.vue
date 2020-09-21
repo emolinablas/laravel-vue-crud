@@ -209,7 +209,7 @@
     import Datatable from './Datatable.vue';
     import Pagination from './Pagination.vue';
     export default {
-        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'leftJoins', 'subTablas', 'botonesExtra', 'usersid',  'buttonNew', 'permissions','links', 'wheres'],
+        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'camposTodos', 'leftJoins', 'subTablas', 'botonesExtra', 'usersid',  'buttonNew', 'permissions','links', 'wheres'],
         components: { datatable: Datatable, pagination: Pagination},
         mounted: function () {
             $(this.$refs.vuemodal).on("hidden.bs.modal", this.alCerrarElModal);
@@ -272,6 +272,7 @@
                     dir: 'desc',
                     getDatos: true,
                     camposShow: JSON.stringify(this.camposShow),
+                    camposTodos: JSON.stringify(this.camposTodos),
                     tabla: this.tabla,
                     tablaid: this.tablaid,
                     leftJoins: JSON.stringify(this.leftJoins),
