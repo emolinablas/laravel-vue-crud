@@ -512,7 +512,7 @@ class CrudController extends Controller
                 if($c->type == 'select'){
                     $toInsert[$c->{'campo-edit'}] = $c->valorid;
                 }elseif($c->type == 'checkbox'){
-                    $toUpdate[$c->campo] = ($c->valor == '')?0:$c->valor;
+                    $toInsert[$c->campo] = ($c->valor == '')?0:$c->valor;
                 } else {
                     $toInsert[$c->campo] = $c->valor;
                 }
