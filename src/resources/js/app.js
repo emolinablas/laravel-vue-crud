@@ -39,6 +39,14 @@ Object.keys(rules).forEach(rule => {
     });
 });
 
+extend("selectValidation", {
+    validate: (value) => {
+        return value.value > 0;
+    },
+    message:
+        "Debe seleccionar un valor"
+});
+
 // Register it globally
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
