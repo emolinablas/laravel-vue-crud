@@ -15,8 +15,8 @@
                 <b-row>
                     <b-col>
                         <b-row>
-                            <b-col v-for="botonEncabezado in botonesEncabezado">
-                                <a :class="'btn btn-block btn-'+botonEncabezado.variant" :key="botonEncabezado.url" :href="botonEncabezado.url">{{ botonEncabezado.etiqueta }}</a>
+                            <b-col v-for="botonEncabezado in botonesEncabezado" :key="botonEncabezado.url">
+                                <a :class="'btn btn-block btn-'+botonEncabezado.variant"  :href="botonEncabezado.url">{{ botonEncabezado.etiqueta }}</a>
                             </b-col>
                         </b-row>
                     </b-col>
