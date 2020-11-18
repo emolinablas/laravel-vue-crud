@@ -6,29 +6,43 @@
                     <option v-for="(records, index) in perPage" :key="index" :value="records">{{records}}</option>
                 </select>
             </div>
-            <div class="form-group col-7">
+            <div class="form-group col-5">
                 <input class="form-control" type="text" v-model="tableData.search" placeholder="Buscar"
                        @input="getProjects()">
             </div>
-            <div class="col-sm-3">
-                <button v-if="buttonNew.component === '' && permissions.create" v-on:click="crearNuevo()" type="button" class="btn btn-success btn-block btn-xs" data-toggle="modal" data-target="#staticBackdrop">
-                    Nuevo
-                </button>
+            <div class="col-sm-5">
 
-                <b-button v-if="buttonNew.component !== '' && permissions.create" variant="success" size="md" block v-b-modal="'buttonNew'">
-                    Nuevo
-                </b-button>
-                <b-modal v-if="buttonNew.component !== '' && permissions.create" size="lg"
+                <b-row>
+                    <b-col>
+                        <b-row>
+                            <b-col v-for="botonEncabezado in botonesEncabezado">
+                                <a :class="'btn btn-block btn-'+botonEncabezado.variant" :key="botonEncabezado.url" :href="botonEncabezado.url">{{ botonEncabezado.etiqueta }}</a>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                    <b-col>
+                        <button v-if="buttonNew.component === '' && permissions.create" v-on:click="crearNuevo()" type="button" class="btn btn-success btn-block btn-xs" data-toggle="modal" data-target="#staticBackdrop">
+                            Nuevo
+                        </button>
 
-                         id="buttonNew"
-                         title="Nuevo"
-                         ok-only ok-variant="secondary" ok-title="Cancel"
-                >
+                        <b-button v-if="buttonNew.component !== '' && permissions.create" variant="success" size="md" block v-b-modal="'buttonNew'">
+                            Nuevo
+                        </b-button>
+                        <b-modal v-if="buttonNew.component !== '' && permissions.create" size="lg"
 
-                    <component @event="actualizarProyectos" @titulomodal="actualizarTituloModal" :is="buttonNew.component"  :data="buttonNew.data" :usersid="usersid">
+                                 id="buttonNew"
+                                 title="Nuevo"
+                                 ok-only ok-variant="secondary" ok-title="Cancel"
+                        >
 
-                    </component>
-                </b-modal>
+                            <component @event="actualizarProyectos" @titulomodal="actualizarTituloModal" :is="buttonNew.component"  :data="buttonNew.data" :usersid="usersid">
+
+                            </component>
+                        </b-modal>
+                    </b-col>
+                </b-row>
+
+
 
             </div>
         </div>
@@ -209,7 +223,7 @@
     import Datatable from './Datatable.vue';
     import Pagination from './Pagination.vue';
     export default {
-        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'camposTodos', 'leftJoins', 'subTablas', 'botonesExtra', 'usersid',  'buttonNew', 'permissions','links', 'wheres'],
+        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'camposTodos', 'leftJoins', 'subTablas', 'botonesExtra', 'botonesEncabezado', 'usersid',  'buttonNew', 'permissions','links', 'wheres'],
         components: { datatable: Datatable, pagination: Pagination},
         mounted: function () {
             $(this.$refs.vuemodal).on("hidden.bs.modal", this.alCerrarElModal);
@@ -439,7 +453,9 @@
                 var vm = this;
 
                 axios.post(this.urlEdit + '?tabla='+this.tabla+'&tablaid='+this.tablaid+'&datos='+JSON.stringify(this.camposEditLocal) , {
-                        id: this.idActual
+                        id: this.idActual,
+                    usersid: this.usersid,
+                    crud: true
                 })
                     .then(response => {
                         let data = response.data;

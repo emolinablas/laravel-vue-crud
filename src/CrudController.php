@@ -24,18 +24,19 @@ class CrudController extends Controller
     private static $colSlug;
     private static $separatorSlug   = '-';
 
-    private static $camposShow      = [];
-    private static $camposTodos     = [];
-    private static $camposEdit      = [];
-    private static $wheres          = [];
-    private static $afterWheres     = [];
-    private static $wheresRaw       = [];
-    private static $lefJoins        = [];
-    private static $botonesExtra    = [];
-    private static $links           = [];
-    private static $subTablas       = [];
-    private static $orders          = [];
-    private static $groups          = [];
+    private static $camposShow          = [];
+    private static $camposTodos         = [];
+    private static $camposEdit          = [];
+    private static $wheres              = [];
+    private static $afterWheres         = [];
+    private static $wheresRaw           = [];
+    private static $lefJoins            = [];
+    private static $botonesExtra        = [];
+    private static $botonesEncabezado   = [];
+    private static $links               = [];
+    private static $subTablas           = [];
+    private static $orders              = [];
+    private static $groups              = [];
 
     private static $template        = 'layouts/app';
 
@@ -161,6 +162,17 @@ class CrudController extends Controller
 
     public function getBotonesExtra(){
         return self::$botonesExtra;
+    }
+
+    public function setBotonEncabezado(array $boton) {
+
+        self::$botonesEncabezado[] = $boton;
+
+        return $this;
+    }
+
+    public function getBotonesEncabezado(){
+        return self::$botonesEncabezado;
     }
 
     public function restrictBotonExtra($componente) {
@@ -445,6 +457,7 @@ class CrudController extends Controller
                 ->with('leftJoins', $this->getLeftJoins())
                 ->with('subTablas', $this->getSubTablas())
                 ->with('botonesExtra', $this->getBotonesExtra())
+                ->with('botonesEncabezado', $this->getBotonesEncabezado())
                 ->with('menu', $this->getMenu())
                 ->with('buttonNew', $this->getButtonNew())
                 ->with('permissions', $this->getPermissions())
