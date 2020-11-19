@@ -506,7 +506,9 @@ class CrudController extends Controller
         $toInsert   = [];
         $toInsert['created_at'] = Carbon::now();
         $toInsert['updated_at'] = Carbon::now();
-        $campos     = json_decode(request()->input('datos'));
+        $campos     = json_decode(urldecode(request()->input('datos')));
+
+        //dd($campos);
 
         foreach ($campos as $c) {
 

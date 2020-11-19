@@ -452,9 +452,10 @@
 
                 var vm = this;
 
-                axios.post(this.urlEdit + '?tabla='+this.tabla+'&tablaid='+this.tablaid+'&datos='+JSON.stringify(this.camposEditLocal) , {
+                axios.post(this.urlEdit + '?tabla='+this.tabla+'&tablaid='+this.tablaid , {
                         id: this.idActual,
                     usersid: this.usersid,
+                    datos: encodeURIComponent(JSON.stringify(this.camposEditLocal)),
                     crud: true
                 })
                     .then(response => {
