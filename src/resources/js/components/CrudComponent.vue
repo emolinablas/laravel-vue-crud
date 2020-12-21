@@ -33,6 +33,7 @@
                                  id="buttonNew"
                                  title="Nuevo"
                                  ok-only ok-variant="secondary" ok-title="Cancel"
+                                 :no-close-on-backdrop="true"
                         >
 
                             <component @event="actualizarProyectos" @titulomodal="actualizarTituloModal" :is="buttonNew.component"  :data="buttonNew.data" :usersid="usersid">
@@ -62,6 +63,7 @@
                         </b-button>
 
                         <b-modal :size="botonExtra.size"
+                                 :no-close-on-backdrop="true"
                                  v-for="botonExtra in botonesExtraLocal"
                                  :key="'modal-'+botonExtra.componente+index"
                                  :id="'modal-boton-extra-'+botonExtra.componente+index"
