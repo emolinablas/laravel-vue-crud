@@ -38,12 +38,11 @@
 
                             <component @event="actualizarProyectos" @titulomodal="actualizarTituloModal" :is="buttonNew.component"  :data="buttonNew.data" :usersid="usersid">
 
+
                             </component>
                         </b-modal>
                     </b-col>
                 </b-row>
-
-
 
             </div>
         </div>
@@ -63,8 +62,8 @@
                         </b-button>
 
                         <b-modal :size="botonExtra.size"
-                                 :no-close-on-backdrop="true"
                                  v-for="botonExtra in botonesExtraLocal"
+                                 :no-close-on-backdrop="true"
                                  :key="'modal-'+botonExtra.componente+index"
                                  :id="'modal-boton-extra-'+botonExtra.componente+index"
                                  :title="botonExtra.etiqueta + ' | ' + project[tabla+'.'+botonExtra.campoNombre]+' | '+tituloModal"
@@ -122,12 +121,23 @@
                                                 :state="valid"
 
                                         >
-
-                                        <input v-if="campoEdit.type === 'string'"
+                                        <summernote
+                                            v-if="campoEdit.type === 'textarea'"
+                                            :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                                    name="summernote"
+                                                    class="form-control"
+                                                    :model="camposEditLocal[index].valor"
+                                                    :config="config"
+                                                    :valor="camposEditLocal[index].valorDefault"
+                                                    v-on:change="value => { camposEditLocal[index].valor = value }"
+                                        ></summernote>
+                                        <input
+                                               v-else-if="campoEdit.type === 'string'"
                                                v-model="camposEditLocal[index].valor"
                                                class="form-control"
                                                :disabled="camposEditLocal[index].disabled && idActual > 0"
-                                               type="text">
+                                               type="text"
+                                        >
                                         <input v-else-if="campoEdit.type === 'numeric'"
                                                v-model="camposEditLocal[index].valor"
                                                class="form-control"
@@ -226,7 +236,7 @@
     import Pagination from './Pagination.vue';
     export default {
         props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'camposTodos', 'leftJoins', 'subTablas', 'botonesExtra', 'botonesEncabezado', 'usersid',  'buttonNew', 'permissions','links', 'wheres'],
-        components: { datatable: Datatable, pagination: Pagination},
+        components: { datatable: Datatable, pagination: Pagination, 'summernote' : require('./Summernote')},
         mounted: function () {
             $(this.$refs.vuemodal).on("hidden.bs.modal", this.alCerrarElModal);
         },
@@ -254,6 +264,19 @@
                 sortOrders[column.name] = -1;
             });
             return {
+                content: null,
+                config: {
+                    height: 100,
+                    toolbar: [
+                        // [groupName, [list of button]]
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['insert', ['gxcode']], // plugin: summernote-ext-codewrapper
+                    ],
+                },
                 tituloModal: "",
                 subTablaActual: {
                     rowsRecibidas: [
@@ -385,10 +408,11 @@
             },
             getProjectActual(index) {
               var actual = this.projects[index];
+              //console.log(this.projects[index]);
                 //console.log(this.tablaid);
               this.idActual = actual[this.tablaid];
 
-                //var vm = this;
+                var vm = this;
               this.camposEditLocal.forEach(function (element2, index2, array) {
                   //console.log(this.idActual);
                   for (var key in element2) {
@@ -398,7 +422,10 @@
                       var obj = element2[key];
 
                       if(key === 'campo') {
+                          //console.log(actual[obj]);
                           element2['valor'] = actual[obj];
+                          element2['valorDefault'] = actual[obj];
+                          //console.log(element2['valor']);
                       }
 
 
@@ -406,6 +433,7 @@
                       if(key === 'type') {
                           //console.log(element2[key]);
                           if(element2[key] == 'select') {
+                              //vm.camposEditLocal[index2].valorid = actual[element2['campo-edit']];
                               element2['valorid'] = actual[element2['campo-edit']];
 
                               //console.log(element2);
@@ -455,7 +483,7 @@
                 var vm = this;
 
                 axios.post(this.urlEdit + '?tabla='+this.tabla+'&tablaid='+this.tablaid , {
-                        id: this.idActual,
+                    id: this.idActual,
                     usersid: this.usersid,
                     datos: encodeURIComponent(JSON.stringify(this.camposEditLocal)),
                     crud: true

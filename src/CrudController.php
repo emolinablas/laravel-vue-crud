@@ -216,6 +216,7 @@ class CrudController extends Controller
 
         if($campo['edit']) {
             $campo['valor'] = "";
+            $campo['valorDefault'] = "";
 
             if($campo['type'] == 'select') {
                 $values = DB::table($campo['name-table'])
@@ -348,7 +349,7 @@ class CrudController extends Controller
 
             $query->groupBy(request()->input('tabla').'.'.request()->input('tablaid'));
 
-                $query->orderBy($columns[$column]->as, $dir);
+            $query->orderBy($columns[$column]->as, $dir);
 
             if ($searchValue) {
                 $query->where(
@@ -499,7 +500,7 @@ class CrudController extends Controller
         //dd(request()->all());
 
         //if()
-            //return response()->json(['respuesta' => true, 'mensaje' =>  'Lo sentimos no se pudo guardar, intenta nuevamente.']);
+        //return response()->json(['respuesta' => true, 'mensaje' =>  'Lo sentimos no se pudo guardar, intenta nuevamente.']);
 
         $toUpdate   = [];
         $toUpdate['updated_at'] = Carbon::now();
