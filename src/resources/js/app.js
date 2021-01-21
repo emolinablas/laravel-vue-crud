@@ -51,6 +51,11 @@ extend("selectValidation", {
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
+import Vue from 'vue';
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
+Vue.component('VueCropper',VueCropper);
+
 // import $ from 'jquery';
 // import dt from 'datatables.net';
 // import buttons from 'datatables.net-buttons';

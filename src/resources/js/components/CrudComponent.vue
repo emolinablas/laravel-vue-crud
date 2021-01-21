@@ -1,3 +1,8 @@
+<style lang="scss">
+.input-hide {
+    display: none;
+}
+</style>
 <template>
     <div class="projects">
         <div class="row">
@@ -51,7 +56,10 @@
             <tbody>
             <tr v-for="(project, index) in projects" :key="project.id">
                 <td v-for="campoShow in camposShow">
-                    {{(project['tcc'+campoShow.as] === 'checkbox')?((project[campoShow.as] == 1)?'SI':'NO'):project[campoShow.as]}}
+                    <img v-if="project['tcc'+campoShow.as] === 'image'" :src="project[campoShow.as]" alt="" width="50px">
+                    <p v-else>
+                        {{(project['tcc'+campoShow.as] === 'checkbox')?((project[campoShow.as] == 1)?'SI':'NO'):project[campoShow.as]}}
+                    </p>
                 </td>
                 <td>
                     <div class="float-right">
@@ -131,6 +139,49 @@
                                                     :valor="camposEditLocal[index].valorDefault"
                                                     v-on:change="value => { camposEditLocal[index].valor = value }"
                                         ></summernote>
+
+                                        <div v-else-if="campoEdit.type === 'image'">
+                                                <b-button
+                                                    href="#"
+                                                    role="button"
+                                                    variant="primary"
+                                                    @click.prevent="showFileChooser(campoEdit.nombre)"
+                                                >
+                                                    Seleccionar imagen
+                                                </b-button>
+                                                <b-button
+                                                    href="#"
+                                                    role="button"
+                                                    variant="success"
+                                                    @click.prevent="cropImage(index, campoEdit.nombre, campoEdit['image-options'])"
+                                                >
+                                                    Crop
+                                                </b-button>
+                                                <input
+                                                    class="input-hide"
+                                                    :ref="campoEdit.nombre"
+                                                    type="file"
+                                                    name="image"
+                                                    accept="image/*"
+                                                    @change="setImage($event,campoEdit.nombre, index)"
+                                                />
+                                                <vue-cropper
+                                                    class="mt-2"
+                                                    :ref="'cropper'+campoEdit.nombre"
+                                                    :aspect-ratio="(campoEdit['image-options'].width / campoEdit['image-options'].height) / 1"
+                                                    :src="campoEdit.src"
+                                                    preview=".preview"
+                                                />
+                                                <b-badge class="mt-2" variant="success">Foto a guardar</b-badge>
+                                                <div class="cropped-image">
+                                                    <img width="100%"
+                                                        v-if="camposEditLocal[index].valor"
+                                                        :src="camposEditLocal[index].valor"
+                                                        alt="Cropped Image"
+                                                    />
+                                                </div>
+                                            </div>
+
                                         <input
                                                v-else-if="campoEdit.type === 'string'"
                                                v-model="camposEditLocal[index].valor"
@@ -351,6 +402,43 @@
             }*/
         },
         methods: {
+            cropImage(index, nombre, imageOptions) {
+                console.log('crop');
+                // get image data for post processing, e.g. upload or setting image src
+                this.camposEditLocal[index].valor = this.$refs['cropper'+nombre][0].getCroppedCanvas(
+                    {
+                         width: imageOptions.width,
+                         height: imageOptions.height,
+                         imageSmoothingEnabled: true,
+                         imageSmoothingQuality: 'high',
+                    }
+                ).toDataURL(this.camposEditLocal[index].imagetype.toString(), imageOptions.quality);
+            },
+            showFileChooser(campo) {
+                this.$refs[campo][0].click();
+            },
+            setImage(e,nombre, index) {
+                console.log('set imagen');
+                const file = e.target.files[0];
+                if (file.type.indexOf('image/') === -1) {
+                    alert('Please select an image file');
+                    return;
+                }
+                if (typeof FileReader === 'function') {
+                    console.log('si es una imagen');
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        this.imgSrc = event.target.result;
+                        // rebuild cropperjs with the updated source
+                        this.$refs['cropper'+nombre][0].replace(event.target.result);
+                        //console.log(file.type);
+                        this.camposEditLocal[index].imagetype = file.type;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Sorry, FileReader API not supported');
+                }
+            },
             actualizarTituloModal(titulo){
                 this.tituloModal = titulo;
             },

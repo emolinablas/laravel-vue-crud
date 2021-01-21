@@ -198,6 +198,11 @@ class CrudController extends Controller
             }
         }
 
+        if($campo['type'] == 'image') {
+            $campo['src'] = '';
+            $campo['imagetype'] = '';
+        }
+
         if(!isset($campo['disabled'])) {
             $campo['disabled'] = false;
         }
