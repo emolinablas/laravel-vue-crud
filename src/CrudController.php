@@ -224,8 +224,13 @@ class CrudController extends Controller
             $campo['valorDefault'] = "";
 
             if($campo['type'] == 'select') {
-                $values = DB::table($campo['name-table'])
-                    ->select($campo['value-column'].' as value', $campo['text-column'].' as text')
+                $values = DB::table($campo['name-table']);
+
+                if(isset($campo['where']) && $campo['where'] != '') {
+                    $values->whereRaw($campo["where"]);
+                }
+
+                    $values = $values->select($campo['value-column'].' as value', $campo['text-column'].' as text')
                     ->get()->toArray();
 
                 $campo['values'] = $values;
