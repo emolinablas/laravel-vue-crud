@@ -553,10 +553,11 @@ class CrudController extends Controller
                 ->where(request()->input('tablaid'), request()->input('id'))
                 ->update($toUpdate);
         }
-
-        if(request()->input('tabla') === 'producto') {
-            event(new ProductAdded());
-            event(new GraficasProyeccion());
+        if(env('PRODUCT_REPORT', false)) {
+            if (request()->input('tabla') === 'producto') {
+                event(new ProductAdded());
+                event(new GraficasProyeccion());
+            }
         }
 
         if($res) {
@@ -599,7 +600,7 @@ class CrudController extends Controller
         }
 
         $data = $query->first();
-        
+
         if(env('PRODUCT_REPORT', false)) {
             if (request()->input('tabla') === 'producto') {
                 event(new ProductAdded());
