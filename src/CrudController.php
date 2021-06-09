@@ -599,9 +599,11 @@ class CrudController extends Controller
         }
 
         $data = $query->first();
-
-        if(request()->input('tabla') === 'producto') {
-            event(new ProductAdded());
+        
+        if(env('PRODUCT_REPORT', false)) {
+            if (request()->input('tabla') === 'producto') {
+                event(new ProductAdded());
+            }
         }
 
         return response()->json(['res'=>true, 'datos' => $data]);
