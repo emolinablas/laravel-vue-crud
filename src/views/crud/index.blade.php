@@ -20,6 +20,7 @@
                 :permissions="{{ json_encode($permissions) }}"
                 :links="{{ json_encode($links) }}"
                 :wheres="{{ json_encode($wheres) }}"
+                :wheres-raw="{{ json_encode($wheresRaw) }}"
         >
         </crud-component>
     </div>

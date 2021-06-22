@@ -194,10 +194,6 @@
                                                class="form-control"
                                                :disabled="camposEditLocal[index].disabled && idActual > 0"
                                                type="number">
-                                        <input v-else-if="campoEdit.type === 'check'"
-                                               type="checkbox"
-                                               :disabled="camposEditLocal[index].disabled && idActual > 0"
-                                               v-model="camposEditLocal[index].valor">
                                         <b-form-datepicker v-else-if="campoEdit.type === 'date'"
                                                            v-model="camposEditLocal[index].valor"
                                                            :disabled="camposEditLocal[index].disabled && idActual > 0"
@@ -217,6 +213,7 @@
 
                                         <b-form-checkbox v-else-if="campoEdit.type = 'checkbox'"
                                                 v-model="camposEditLocal[index].valor"
+                                                :disabled="camposEditLocal[index].disabled && idActual > 0"
                                                 name="checkbox-1"
                                                 value="1"
                                                 unchecked-value="0"
@@ -286,7 +283,7 @@
     import Datatable from './Datatable.vue';
     import Pagination from './Pagination.vue';
     export default {
-        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'camposTodos', 'leftJoins', 'subTablas', 'botonesExtra', 'botonesEncabezado', 'usersid',  'buttonNew', 'permissions','links', 'wheres'],
+        props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'camposTodos', 'leftJoins', 'subTablas', 'botonesExtra', 'botonesEncabezado', 'usersid',  'buttonNew', 'permissions','links', 'wheres', 'wheresRaw'],
         components: { datatable: Datatable, pagination: Pagination, 'summernote' : require('./Summernote')},
         mounted: function () {
             $(this.$refs.vuemodal).on("hidden.bs.modal", this.alCerrarElModal);
@@ -366,7 +363,8 @@
                     tabla: this.tabla,
                     tablaid: this.tablaid,
                     leftJoins: JSON.stringify(this.leftJoins),
-                    wheres: JSON.stringify(this.wheres)
+                    wheres: JSON.stringify(this.wheres),
+                    wheresRaw: JSON.stringify(this.wheresRaw)
                 },
                 pagination: {
                     lastPage: '',

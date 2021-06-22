@@ -72,6 +72,19 @@ class CrudController extends Controller
         return self::$wheres;
     }
 
+    public function setWhereRaw($query)
+    {
+        self::$wheresRaw[] = $query;
+        return $this;
+    }
+
+    public function getWheresRaw()
+    {
+        return self::$wheresRaw;
+    }
+
+
+
     public function setAfterWhere($field1, $operator, $variable, $tipo)
     {
 
@@ -187,6 +200,8 @@ class CrudController extends Controller
 
     public function setCampo(array $campo)
     {
+
+        if($campo['type'] == '')
 
         if(!isset($campo['rules'])) {
             $campo['rules'] = '';
@@ -325,6 +340,7 @@ class CrudController extends Controller
             $camposTodos    = json_decode(request()->input('camposTodos'));
             $leftJoins      = json_decode(request()->input('leftJoins'));
             $wheres         = json_decode(request()->input('wheres'));
+            $wheresRaw      = json_decode(request()->input('wheresRaw'));
 
 
 
@@ -380,6 +396,12 @@ class CrudController extends Controller
                 }
             }
 
+            if(count($wheresRaw) > 0) {
+                foreach ($wheresRaw as $w) {
+                    $query->whereRaw($w);
+                }
+            }
+
             $projects = $query->paginate($length);
 
             //dd($projects);
@@ -398,7 +420,11 @@ class CrudController extends Controller
 
             //si existe entonces
             if($isPermisos) {
-                $permiso = $this->getPermisoByModulo('/'. Route::current()->uri(),auth()->user()->rolid);
+                if(auth()->check()) {
+                    $permiso = $this->getPermisoByModulo('/' . Route::current()->uri(), auth()->user()->rolid);
+                } else {
+                    abort(403, 'Unauthorized action.');
+                }
 
                 //verificamos si el usuario tiene permisos para este modulo
                 if( $permiso != null) {
@@ -454,7 +480,9 @@ class CrudController extends Controller
                 }
             }
 
+//dd($this->getWheresRaw());
 
+            //dd($this->getWheresRaw());
 
             return view('laravel-vue-crud::crud.index')
                 ->with('title', $this->getTitulo())
@@ -474,6 +502,7 @@ class CrudController extends Controller
                 ->with('permissions', $this->getPermissions())
                 ->with('links', $this->getLinks())
                 ->with('wheres', $this->getWheres())
+                ->with('wheresRaw', $this->getWheresRaw())
                 ;
         }
     }
