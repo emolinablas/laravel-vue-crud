@@ -207,6 +207,10 @@ class CrudController extends Controller
             $campo['rules'] = '';
         }
 
+        if(!isset($campo['searchable'])) {
+            $campo['searchable'] = true;
+        }
+
         if($campo['type'] == 'numeric') {
             if(!isset($campo['decimales'])) {
                 $campo['decimales'] = 0;
@@ -383,7 +387,9 @@ class CrudController extends Controller
                         $query->where(request()->input('tabla').'.'.request()->input('tablaid'), 'like', '%' . $searchValue . '%');
 
                         foreach($columns as $c) {
-                            $query->orWhere($c->as, 'like', '%' . $searchValue . '%');
+                            if($c->searchable) {
+                                $query->orWhere($c->as, 'like', '%' . $searchValue . '%');
+                            }
                         }
                     }
                 );
