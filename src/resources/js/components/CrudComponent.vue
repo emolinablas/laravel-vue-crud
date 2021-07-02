@@ -199,11 +199,21 @@
                                                            :disabled="camposEditLocal[index].disabled && idActual > 0"
                                                            locale="es" ></b-form-datepicker>
 
-                                        <b-form-select v-else-if="campoEdit.type == 'select'"
-                                                       v-model="camposEditLocal[index].valorid"
-                                                       :options="camposEditLocal[index].values"
-                                                       :disabled="camposEditLocal[index].disabled && idActual > 0"
-                                        ></b-form-select>
+<!--                                        <b-form-select v-else-if="campoEdit.type == 'select'"-->
+<!--                                                       v-model="camposEditLocal[index].valorid"-->
+<!--                                                       :options="camposEditLocal[index].values"-->
+<!--                                                       :disabled="camposEditLocal[index].disabled && idActual > 0"-->
+<!--                                        ></b-form-select>-->
+
+                                            <v-select
+                                                v-else-if="campoEdit.type == 'select'"
+                                                v-model="camposEditLocal[index].valueSelect"
+                                                :options="camposEditLocal[index].values"
+                                                :clearable='false'
+                                                :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                            >
+
+                                            </v-select>
 
                                         <b-form-select v-else-if="campoEdit.type == 'enum'"
                                                        v-model="camposEditLocal[index].valor"
@@ -521,6 +531,12 @@
                           if(element2[key] == 'select') {
                               //vm.camposEditLocal[index2].valorid = actual[element2['campo-edit']];
                               element2['valorid'] = actual[element2['campo-edit']];
+
+                              element2['values'].forEach(function (value, index3) {
+                                  if(value.value === actual[element2['campo-edit']]) {
+                                      element2['valueSelect'] = value;
+                                  }
+                              });
 
                               //console.log(element2);
                           }

@@ -249,10 +249,16 @@ class CrudController extends Controller
                     $values->whereRaw($campo["where"]);
                 }
 
-                    $values = $values->select($campo['value-column'].' as value', $campo['text-column'].' as text')
+                    $values = $values->select($campo['value-column'].' as value', $campo['text-column'].' as text', $campo['text-column'].' as label')
                     ->get()->toArray();
 
                 $campo['values'] = $values;
+                $stdValorDefault = new \stdClass();
+
+                $stdValorDefault->value = 0;
+                $stdValorDefault->label = 'Selecciones un valor';
+
+                $campo['valueSelect'] = $stdValorDefault;
             } else if($campo['type'] == 'enum') {
                 $values = [];
                 foreach ($campo['options'] as $key => $value) {
@@ -562,7 +568,7 @@ class CrudController extends Controller
             //$toUpdate[$c->campo] = $c->valor;
 
             if($c->type == 'select'){
-                $toUpdate[$c->{'campo-edit'}] = $c->valorid;
+                $toUpdate[$c->{'campo-edit'}] = $c->valueSelect->value;
             } elseif($c->type == 'checkbox'){
                 $toUpdate[$c->campo] = ($c->valor == '')?0:$c->valor;
             } else {
@@ -570,8 +576,9 @@ class CrudController extends Controller
             }
 
             if($c->campo != request()->input('tablaid')) {
+                //dd($c->valueSelect->value);
                 if($c->type == 'select'){
-                    $toInsert[$c->{'campo-edit'}] = $c->valorid;
+                    $toInsert[$c->{'campo-edit'}] = $c->valueSelect->value;
                 }elseif($c->type == 'checkbox'){
                     $toInsert[$c->campo] = ($c->valor == '')?0:$c->valor;
                 } else {
