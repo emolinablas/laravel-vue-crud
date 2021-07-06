@@ -82,6 +82,7 @@
                                 :options="sortOptions"
                                 :aria-describedby="ariaDescribedby"
                                 class="w-75"
+                                @change="sortChanged({sortBy : sortByTable})"
                             >
                                 <template #first>
                                     <option value="">-- ninguno --</option>
@@ -94,6 +95,7 @@
                                 :aria-describedby="ariaDescribedby"
                                 size="sm"
                                 class="w-25"
+                                @change="sortChanged({sortBy : sortByTable})"
                             >
                                 <option :value="false">Asc</option>
                                 <option :value="true">Desc</option>
@@ -120,7 +122,7 @@
                     </b-form-group>
                 </b-col>-->
 
-                <b-col lg="6" class="my-1">
+<!--                <b-col lg="6" class="my-1">-->
 <!--                    <b-form-group
                         v-model="sortDirection"
                         label="Filter On"
@@ -141,7 +143,7 @@
                             <b-form-checkbox value="isActive">Active</b-form-checkbox>
                         </b-form-checkbox-group>
                     </b-form-group>-->
-                </b-col>
+<!--                </b-col>-->
 
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
@@ -191,11 +193,12 @@
 
             >
 
-                <template v-for="(c, index) in columns" #cell(c.name)="row">
-                    <img v-if="row.item['tcc'+camposShow[index].as] === 'image'" :src="row.item[camposShow[index].as]" alt="" width="50px">
-                    <p v-else>
+                <template v-for="(c, index2) in columns" #cell()="row">
 
-                        {{(row.item['tcc'+camposShow[index].as] === 'checkbox')?((row.item[camposShow[index].as] == 1)?'SI':'NO'):row.item[camposShow[index].as]}}
+<!--                    {{JSON.stringify(row.field.key)}}-->
+                    <img v-if="row.item['tcc'+row.field.key] === 'image'" :src="row.item[row.field.key]" alt="" width="50px">
+                    <p v-else>
+                        {{(row.item['tcc'+row.field.key] === 'checkbox')?((row.item[row.field.key] == 1)?'SI':'NO'):row.item[row.field.key]}}
                     </p>
                 </template>
 
@@ -459,18 +462,18 @@
         props: ['urlRuta',  'urlEdit', 'tabla', 'tablaid', 'camposShow', 'camposEdit', 'camposTodos', 'leftJoins', 'subTablas', 'botonesExtra', 'botonesEncabezado', 'usersid',  'buttonNew', 'permissions','links', 'wheres', 'wheresRaw'],
         components: { datatableb: Datatableb, pagination: Pagination, 'summernote' : require('./Summernote')},
         watch: {
-            sortByTable(value) {
-                var ctx = {
-                    sortBy : value
-                }
-                this.sortChanged(ctx)
-            },
-            sortDesc() {
-                var ctx = {
-                    sortBy : this.sortByTable
-                }
-                this.sortChanged(ctx)
-            }
+            // sortByTable(value) {
+            //     var ctx = {
+            //         sortBy : value
+            //     }
+            //     this.sortChanged(ctx)
+            // },
+            // sortDesc() {
+            //     var ctx = {
+            //         sortBy : this.sortByTable
+            //     }
+            //     this.sortChanged(ctx)
+            // }
         },
         mounted: function () {
             this.totalRows = this.items.length
