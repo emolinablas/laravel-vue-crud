@@ -9,6 +9,9 @@
             color: #3273dc !important;
         }
     }
+    .page-item {
+      cursor: pointer;
+    }
 </style>
 
 <template>

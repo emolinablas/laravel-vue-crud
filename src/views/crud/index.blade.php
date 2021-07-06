@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h2>{{$title}}</h2>
-        <crud-component
+        <crud-componentb
                 url-ruta="{{$urlRuta}}"
                 url-edit="{{$urlEdit}}"
                 tabla="{{$tabla}}"
@@ -22,7 +22,7 @@
                 :wheres="{{ json_encode($wheres) }}"
                 :wheres-raw="{{ json_encode($wheresRaw) }}"
         >
-        </crud-component>
+        </crud-componentb>
     </div>
 
 @endsection

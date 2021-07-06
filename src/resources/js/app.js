@@ -101,6 +101,7 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 
  //Vue.component('pagination-component', require('./components/PaginationComponent.vue').default);
  Vue.component('crud-component', require('./components/CrudComponent.vue').default);
+ Vue.component('crud-componentb', require('./components/CrudComponentb.vue').default);
 
 // Vue.component('principal-crud-component', require('./components/PrincipalCrudComponent.vue').default);
 
