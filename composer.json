@@ -10,7 +10,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "intervention/image": "^2.5"
+    },
     "autoload": {
         "psr-4": {
             "Emolinablas\\LaravelVueCrud\\": "src/"

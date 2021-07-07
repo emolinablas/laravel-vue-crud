@@ -8,9 +8,12 @@ use App\Events\GraficasProyeccion;
 use App\Events\ProductAdded;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class CrudController extends Controller
 {
@@ -220,6 +223,14 @@ class CrudController extends Controller
         if($campo['type'] == 'image') {
             $campo['src'] = '';
             $campo['imagetype'] = '';
+
+            if(!isset($campo['save-as-file'])) {
+                $campo['save-as-file'] = false;
+            }
+
+            if(!isset($campo['create-thumbnail'])) {
+                $campo['create-thumbnail'] = false;
+            }
         }
 
         if(!isset($campo['disabled'])) {
@@ -562,10 +573,66 @@ class CrudController extends Controller
 
         //dd($campos);
 
+        //dd($request->input('tabla'));
+
         foreach ($campos as $c) {
 
-
+            //dd($c->{'image-options'}->{'save-as-file'});
             //$toUpdate[$c->campo] = $c->valor;
+
+            //dd($c);
+            if($c->type == 'image') {
+                if($c->{'image-options'}->{'save-as-file'}) {
+                    $path  = 'public/crud/'.request()->input('tabla').'/';
+
+                    $fechaActual = date_create();
+                    $nombreUnico = date_timestamp_get($fechaActual);
+
+
+                    $imageType = explode('/',$c->imagetype)[1];
+
+                    $pathThumb = $path.'thumbnail-'.$nombreUnico;
+                    $path = $path.$nombreUnico;
+
+                    $base64_image = $c->valor; // your base64 encoded
+                    @list($type, $file_data) = explode(';', $base64_image);
+                    @list(, $file_data) = explode(',', $file_data);
+
+                    //dd($file_data);
+                    //$imageName = str_random(10).'.'.$type;
+                    //Storage::disk('local')->put($imageName, base64_decode($file_data));
+
+                    Storage::put($path.'.'.$imageType, base64_decode($file_data));
+
+                    $c->valor = '/'.str_replace('public', 'storage',$path).'.'.$imageType;
+
+
+                    if($c->{'image-options'}->{'create-thumbnail'}) {
+                        $img = Image::make($file_data);
+                        $img->resize((int)$c->{'image-options'}->{'thumbnail-width'},(int)$c->{'image-options'}->{'thumbnail-height'}, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
+
+                        Storage::put($pathThumb.'.'.$imageType, $img->stream($imageType, (int)$c->{'image-options'}->{'thumbnail-quality'}));
+
+                    }
+
+                    if( request()->input('id') != 0 ) {
+
+                        $res = DB::table(request()->input('tabla'))
+                            ->where(request()->input('tablaid'), request()->input('id'))
+                            ->pluck($c->campo);
+
+                        //dd($res);
+
+                        //eliminamos el archivo anterior
+                        $toDelete = str_replace('storage', 'public', $res[0]);
+                        Storage::delete([$toDelete, str_replace(request()->input('tabla') . '/', request()->input('tabla') . '/thumbnail-', $toDelete)]);
+
+                    }
+                }
+            }
 
             if($c->type == 'select'){
                 $toUpdate[$c->{'campo-edit'}] = $c->valueSelect->value;
@@ -579,7 +646,8 @@ class CrudController extends Controller
                 //dd($c->valueSelect->value);
                 if($c->type == 'select'){
                     $toInsert[$c->{'campo-edit'}] = $c->valueSelect->value;
-                }elseif($c->type == 'checkbox'){
+                }
+                elseif($c->type == 'checkbox'){
                     $toInsert[$c->campo] = ($c->valor == '')?0:$c->valor;
                 } else {
                     $toInsert[$c->campo] = $c->valor;

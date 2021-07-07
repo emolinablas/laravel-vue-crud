@@ -323,7 +323,7 @@
                                                     class="input-hide"
                                                     :ref="campoEdit.nombre"
                                                     type="file"
-                                                    name="image"
+                                                    :name="'image'+camposEditLocal[index].as"
                                                     accept="image/*"
                                                     @change="setImage($event,campoEdit.nombre, index)"
                                                 />
@@ -373,6 +373,9 @@
                                                 :options="camposEditLocal[index].values"
                                                 :clearable='false'
                                                 :disabled="camposEditLocal[index].disabled && idActual > 0"
+                                                :invalid-feedback="(errors[0] != null)?errors[0]:'*'"
+                                                :valid-feedback="'Válido'"
+                                                :state="valid"
                                             >
 
                                             </v-select>
@@ -476,7 +479,7 @@
             // }
         },
         mounted: function () {
-            this.totalRows = this.items.length
+            // this.totalRows = this.items.length
             $(this.$refs.vuemodal).on("hidden.bs.modal", this.alCerrarElModal);
         },
         created() {
@@ -574,46 +577,6 @@
                     from: '',
                     to: ''
                 },
-
-                items: [
-                    { isActive: true, age: 40, name: { first: 'Dickerson', last: 'Macdonald' } },
-                    { isActive: false, age: 21, name: { first: 'Larsen', last: 'Shaw' } },
-                    {
-                        isActive: false,
-                        age: 9,
-                        name: { first: 'Mini', last: 'Navarro' },
-                        _rowVariant: 'success'
-                    },
-                    { isActive: false, age: 89, name: { first: 'Geneva', last: 'Wilson' } },
-                    { isActive: true, age: 38, name: { first: 'Jami', last: 'Carney' } },
-                    { isActive: false, age: 27, name: { first: 'Essie', last: 'Dunlap' } },
-                    { isActive: true, age: 40, name: { first: 'Thor', last: 'Macdonald' } },
-                    {
-                        isActive: true,
-                        age: 87,
-                        name: { first: 'Larsen', last: 'Shaw' },
-                        _cellVariants: { age: 'danger', isActive: 'warning' }
-                    },
-                    { isActive: false, age: 26, name: { first: 'Mitzi', last: 'Navarro' } },
-                    { isActive: false, age: 22, name: { first: 'Genevieve', last: 'Wilson' } },
-                    { isActive: true, age: 38, name: { first: 'John', last: 'Carney' } },
-                    { isActive: false, age: 29, name: { first: 'Dick', last: 'Dunlap' } }
-                ],
-                fields: [
-                    { key: 'name', label: 'Person full name', sortable: true, sortDirection: 'desc' },
-                    { key: 'age', label: 'Person age', sortable: true, class: 'text-center' },
-                    {
-                        key: 'isActive',
-                        label: 'Is Active',
-                        formatter: (value, key, item) => {
-                            return value ? 'Yes' : 'No'
-                        },
-                        sortable: true,
-                        sortByFormatted: true,
-                        filterByFormatted: true
-                    },
-                    { key: 'actions', label: 'Actions' }
-                ],
                 isBusy: false,
                 totalRows: 1,
                 currentPage: 1,
@@ -820,12 +783,17 @@
 
                     var vm = this;
 
+                    var headers = {
+                        // 'Content-Type': 'multipart/form-data',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    };
+
                     axios.post(this.urlEdit + '/'+id, {
                         _method: 'delete',
                         tabla: this.tabla,
-                        tablaid: this.tablaid
+                        tablaid: this.tablaid,
                         // _token: csrf
-                    })
+                    }, headers)
                         .then(response => {
                             let data = response.data;
 
@@ -851,12 +819,22 @@
 
                 var vm = this;
 
-                axios.post(this.urlEdit + '?tabla='+this.tabla+'&tablaid='+this.tablaid , {
-                    id: this.idActual,
-                    usersid: this.usersid,
-                    datos: encodeURIComponent(JSON.stringify(this.camposEditLocal)),
-                    crud: true
-                })
+                var formData = new FormData();
+                var imagefile = document.querySelector('#file');
+
+                //formData.append("image", imagefile.files[0]);
+
+                formData.append("id", this.idActual);
+                formData.append("usersid", this.usersid);
+                formData.append("datos", encodeURIComponent(JSON.stringify(this.camposEditLocal)));
+                formData.append("crud", true);
+
+                var headers = {
+                    'Content-Type': 'multipart/form-data',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                };
+
+                axios.post(this.urlEdit + '?tabla='+this.tabla+'&tablaid='+this.tablaid , formData, headers)
                     .then(response => {
                         let data = response.data;
 
