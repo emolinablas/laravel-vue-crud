@@ -224,12 +224,12 @@ class CrudController extends Controller
             $campo['src'] = '';
             $campo['imagetype'] = '';
 
-            if(!isset($campo['save-as-file'])) {
-                $campo['save-as-file'] = false;
+            if(!isset($campo['image-options']['save-as-file'])) {
+                $campo['image-options']['save-as-file'] = false;
             }
 
-            if(!isset($campo['create-thumbnail'])) {
-                $campo['create-thumbnail'] = false;
+            if(!isset($campo['image-options']['create-thumbnail'])) {
+                $campo['image-options']['create-thumbnail'] = false;
             }
         }
 
