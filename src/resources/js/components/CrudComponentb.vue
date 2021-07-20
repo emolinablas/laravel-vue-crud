@@ -102,6 +102,12 @@
                             </b-form-select>
                         </b-input-group>
                     </b-form-group>
+                    <b-col lg="6" class="mt-2">
+                        <b-button-group>
+                            <b-button :disabled="this.isBusy" variant="outline-primary" v-on:click="getDownload('xls')">XLS</b-button>
+                            <b-button :disabled="this.isBusy" variant="outline-primary" v-on:click="getDownload('csv')">CSV</b-button>
+                        </b-button-group>
+                    </b-col>
                 </b-col>
 
 <!--                <b-col lg="6" class="my-1">
@@ -160,14 +166,17 @@
                             <option v-for="(records, index) in perPage" :key="index" :value="records">{{records}}</option>
                         </select>
                     </b-form-group>
+                    <b-row class="mt-3">
+                        <b-col lg="6" class="my-1">
+                            <pagination :pagination="pagination"
+                                        @prev="getProjects(pagination.prevPageUrl)"
+                                        @next="getProjects(pagination.nextPageUrl)">
+                            </pagination>
+                        </b-col>
+                    </b-row>
                 </b-col>
 
-                <b-col sm="7" md="6" class="my-1">
-                    <pagination :pagination="pagination"
-                                @prev="getProjects(pagination.prevPageUrl)"
-                                @next="getProjects(pagination.nextPageUrl)">
-                    </pagination>
-                </b-col>
+
             </b-row>
 
             <!-- Main table element -->
@@ -459,6 +468,8 @@
     import Datatableb from './Datatableb.vue';
     import Pagination from './Pagination.vue';
 
+    import exportFromJSON from 'export-from-json';
+
     var delayTimer;
 
     export default {
@@ -602,7 +613,7 @@
                     .map(f => {
                         return { text: f.label, value: f.key }
                     })
-            },
+            }
             /*paramsEdit: function () {
 
                 var paramEdit = {};
@@ -624,6 +635,54 @@
             }*/
         },
         methods: {
+            getDownload(type , url = this.urlRuta) {
+
+
+                this.isBusy = true;
+                //this.tableData.draw++;
+                var parametrosString = JSON.stringify(this.tableData);
+                var parametros = JSON.parse(parametrosString);
+
+                parametros['length'] = this.pagination.total;
+
+                var vm = this;
+                axios.get(url, {
+                    params: parametros,
+                    usersid: this.usersid
+                })
+                    .then(response => {
+                        let datas = response.data;
+
+                        const datosADescargar = datas.data.data;
+                        var dataD = datosADescargar;
+                        var dataDown = [];
+                        dataD.forEach(function (value1, index1){
+
+                            var item = {};
+
+                            vm.columns.forEach(function (value, index) {
+                                item [value.label] =  value1[value.key];
+                            });
+
+                            dataDown.push(item);
+
+
+                        });
+
+                        const data = dataDown;
+                        const fileName = 'datos';
+                        const exportType = type;
+
+                        exportFromJSON({ data, fileName, exportType });
+
+                        this.isBusy = false;
+                    })
+                    .catch(errors => {
+                        console.log(errors);
+                        this.isBusy = false;
+                    });
+            },
+
             info(item, index, button) {
                 this.infoModal.title = `Row index: ${index}`
                 this.infoModal.content = JSON.stringify(item, null, 2)
