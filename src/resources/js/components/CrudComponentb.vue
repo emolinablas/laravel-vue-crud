@@ -43,7 +43,7 @@
                         <b-button v-if="buttonNew.component !== '' && permissions.create" variant="success" size="sm" block v-b-modal="'buttonNew'">
                             Nuevo
                         </b-button>
-                        <b-modal v-if="buttonNew.component !== '' && permissions.create" size="sm"
+                        <b-modal v-if="buttonNew.component !== '' && permissions.create" size="lg"
 
                                  id="buttonNew"
                                  title="Nuevo"
