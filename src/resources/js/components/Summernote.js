@@ -16,7 +16,24 @@ props: {
     },
     config: {
         type: Object,
-        default: {},
+        default: {
+            tabsize: 2,
+            height: 120,
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['style']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['fontname', ['fontname']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        },
     },
 },
 
@@ -44,7 +61,7 @@ vm.$emit('change', $(vm.$el).summernote('code'));
 }
 };
 
-$(this.$el).summernote(config);
+$(this.$el).summernote();
 
 },
 
