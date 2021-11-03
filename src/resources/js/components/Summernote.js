@@ -17,22 +17,6 @@ props: {
     config: {
         type: Object,
         default: {
-            tabsize: 2,
-            height: 120,
-            toolbar: [
-                // [groupName, [list of button]]
-                ['style', ['style']],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']],
-                ['fontname', ['fontname']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview', 'help']]
-            ]
         },
     },
 },
@@ -49,19 +33,19 @@ let config = this.config;
 config.callbacks = {
 
 onInit: function () {
-$(vm.$el).summernote("code", vm.model);
+    $(vm.$el).summernote("code", vm.model);
 },
 
 onChange: function () {
-vm.$emit('change', $(vm.$el).summernote('code'));
+    vm.$emit('change', $(vm.$el).summernote('code'));
 },
 
 onBlur: function () {
-vm.$emit('change', $(vm.$el).summernote('code'));
+    vm.$emit('change', $(vm.$el).summernote('code'));
 }
 };
 
-$(this.$el).summernote();
+$(this.$el).summernote(config);
 
 },
 

@@ -183,6 +183,7 @@
             <b-table
                 striped
                 bordered
+                :responsive="true"
                 :items="projects"
                 :fields="columns"
                 :current-page="currentPage"
@@ -206,9 +207,9 @@
 
 <!--                    {{JSON.stringify(row.field.key)}}-->
                     <img v-if="row.item['tcc'+row.field.key] === 'image'" :src="row.item[row.field.key]" alt="" width="50px">
-                    <p v-else>
-                        {{(row.item['tcc'+row.field.key] === 'checkbox')?((row.item[row.field.key] == 1)?'SI':'NO'):row.item[row.field.key]}}
-                    </p>
+                    <div v-else v-html="(row.item['tcc'+row.field.key] === 'checkbox')?((row.item[row.field.key] == 1)?'SI':'NO'):row.item[row.field.key]">
+
+                    </div>
                 </template>
 
 <!--                <template #cell(name)="row">
@@ -421,7 +422,7 @@
                             <button v-if="!enviandoDatos" v-on:click="guardarDatos" type="button" class="btn btn-primary" :disabled="invalid">Guardar Datos</button>
                             <button v-else class="btn btn-secondary" type="button" disabled>
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                Enviando pedido...
+                                Enviando datos...
                             </button>
 
                         </ValidationObserver>
@@ -526,16 +527,22 @@
             return {
                 content: null,
                 config: {
-                    height: 100,
+                    tabsize: 2,
+                    height: 120,
                     toolbar: [
                         // [groupName, [list of button]]
+                        ['style', ['style']],
                         ['style', ['bold', 'italic', 'underline', 'clear']],
                         ['font', ['strikethrough', 'superscript', 'subscript']],
                         ['fontsize', ['fontsize']],
                         ['color', ['color']],
                         ['para', ['ul', 'ol', 'paragraph']],
-                        ['insert', ['gxcode']], // plugin: summernote-ext-codewrapper
-                    ],
+                        ['height', ['height']],
+                        ['fontname', ['fontname']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['fullscreen', 'codeview', 'help']]
+                    ]
                 },
                 tituloModal: "",
                 subTablaActual: {
@@ -954,6 +961,7 @@
                 this.pagination.to = data.to;
 
                 this.totalRows = data.total;
+                this.perPageTable = data.total;
                 // this.currentPage.data.current_page;
             },
             sortChanged(ctx){
