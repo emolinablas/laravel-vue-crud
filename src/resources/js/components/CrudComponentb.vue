@@ -222,7 +222,7 @@
                         <a v-for="link in links" :target="link.target" :key="'button-link-'+row.id+row.index" :href="link.ruta+'?id='+row.item[tablaid]"><b-button :style="{ marginRight: '5px' }"  pill :variant="link.variant" size="sm">{{ link.etiqueta }}</b-button></a>
 
                         <b-button :style="{ marginRight: '5px' }" v-for="botonExtra in botonesExtraLocal" :key="'button-modal-'+botonExtra.componente+row.index" :variant="botonExtra.variant" v-b-modal="'modal-boton-extra-'+botonExtra.componente+row.index" size="sm" >
-                            {{ botonExtra.etiqueta }}
+                            {{ botonExtra.etiqueta }} <b-icon :icon="botonExtra.icon"></b-icon>
                         </b-button>
 
                         <b-modal :size="botonExtra.size"
