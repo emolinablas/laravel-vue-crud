@@ -4,13 +4,12 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
- require('./bootstrap');
+require('./bootstrap');
 
- window.Vue = require('vue');
-import DOMPurify from 'dompurify';
-window.DOMPurify = DOMPurify;
+window.Vue = require('vue');
+window.DOMPurify = require('dompurify');
 
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+var { BootstrapVue, IconsPlugin } = require('bootstrap-vue');
 
 // Install BootstrapVue
 Vue.use(BootstrapVue);
@@ -54,10 +53,9 @@ extend("selectValidation", {
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-import Vue from 'vue';
-import VueCropper from 'vue-cropperjs';
-import 'cropperjs/dist/cropper.css';
-Vue.component('VueCropper',VueCropper);
+var VueCropper = require('vue-cropperjs').default;
+require('cropperjs/dist/cropper.css');
+Vue.component('VueCropper', VueCropper);
 
 // import $ from 'jquery';
 // import dt from 'datatables.net';
@@ -98,13 +96,13 @@ Vue.component('VueCropper',VueCropper);
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
- const files = require.context('../../../../../../resources/js/dynamic-components', true, /\.vue$/i)
-//console.log(files.keys());
-files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+// Registro de componentes dinámicos de la app consumidora.
+// Se omite en la compilación del paquete standalone; la app consumidora
+// debe registrar sus propios componentes en su propio app.js usando:
+//   const files = require.context('./dynamic-components', true, /\.vue$/i)
+//   files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
- //Vue.component('pagination-component', require('./components/PaginationComponent.vue').default);
- Vue.component('crud-component', require('./components/CrudComponent.vue').default);
- Vue.component('crud-componentb', require('./components/CrudComponentb.vue').default);
+Vue.component('crud-componentb', require('./components/CrudComponentb.vue').default);
 
 // Vue.component('principal-crud-component', require('./components/PrincipalCrudComponent.vue').default);
 

@@ -12,6 +12,7 @@ const mix = require('laravel-mix');
  */
 
 mix.js(['src/resources/js/summernote-bs4.min.js','src/resources/js/app.js'], 'src/public/js/app.js')
+    .vue({ version: 2 })
     .sass('src/resources/sass/app.scss', 'src/public/css');
 
 mix.copyDirectory('src/public', '../../../public/vendor/emolinablas/laravel-vue-crud');
