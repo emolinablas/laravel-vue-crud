@@ -207,8 +207,7 @@
 
 <!--                    {{JSON.stringify(row.field.key)}}-->
                     <img v-if="row.item['tcc'+row.field.key] === 'image'" :src="row.item[row.field.key]" alt="" width="50px">
-                    <div v-else v-html="(row.item['tcc'+row.field.key] === 'checkbox')?((row.item[row.field.key] == 1)?'SI':'NO'):row.item[row.field.key]">
-
+                    <div v-else v-html="sanitize(row.item['tcc'+row.field.key], row.item[row.field.key])">
                     </div>
                 </template>
 
@@ -397,8 +396,8 @@
                                                        :disabled="camposEditLocal[index].disabled && idActual > 0"
                                         ></b-form-select>
 
-                                        <b-form-checkbox v-else-if="campoEdit.type = 'checkbox'"
-                                                v-model="camposEditLocal[index].valor"
+                                        <b-form-checkbox v-else-if="campoEdit.type === 'checkbox'"
+                                                         v-model="camposEditLocal[index].valor"
                                                 :disabled="camposEditLocal[index].disabled && idActual > 0"
                                                 name="checkbox-1"
                                                 value="1"
@@ -640,8 +639,17 @@
 
                 return [];
             }*/
-        },
-        methods: {
+        },        methods: {
+            sanitize(fieldType, value) {
+                if (fieldType === 'checkbox') {
+                    return value == 1 ? 'SI' : 'NO';
+                }
+                // Sanitizar HTML para prevenir XSS
+                if (typeof DOMPurify !== 'undefined') {
+                    return DOMPurify.sanitize(value != null ? String(value) : '');
+                }
+                return value != null ? String(value) : '';
+            },
             getDownload(type , url = this.urlRuta) {
 
 

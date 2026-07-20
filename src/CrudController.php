@@ -4,8 +4,6 @@ namespace Emolinablas\LaravelVueCrud;
 
 use App\Http\Controllers\Controller;
 
-use App\Events\GraficasProyeccion;
-use App\Events\ProductAdded;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
@@ -40,6 +38,15 @@ class CrudController extends Controller
     private static $subTablas           = [];
     private static $orders              = [];
     private static $groups              = [];
+
+    // Callbacks para eventos post-store (reemplaza App\Events hardcodeados)
+    private $afterStoreCallbacks = [];
+
+    public function onAfterStore(callable $callback): static
+    {
+        $this->afterStoreCallbacks[] = $callback;
+        return $this;
+    }
 
     private static $template        = 'layouts/app';
 
@@ -93,13 +100,13 @@ class CrudController extends Controller
 
         $where = ['field1' => $field1, 'operator' => $operator, 'variable' => $variable, 'tipo' => $tipo];
 
-        self::$wheres[] = $where;
+        self::$afterWheres[] = $where;
         return $this;
     }
 
     public function getAfterWheres()
     {
-        return self::$wheres;
+        return self::$afterWheres;
     }
 
     public function setLink($link)
@@ -204,9 +211,7 @@ class CrudController extends Controller
     public function setCampo(array $campo)
     {
 
-        if($campo['type'] == '')
-
-        if(!isset($campo['rules'])) {
+        if (!isset($campo['rules'])) {
             $campo['rules'] = '';
         }
 
@@ -583,7 +588,11 @@ class CrudController extends Controller
             //dd($c);
             if($c->type == 'image') {
                 if($c->{'image-options'}->{'save-as-file'}) {
-                    $path  = 'public/crud/'.request()->input('tabla').'/';
+                    $tablaSegura = preg_replace('/[^a-zA-Z0-9_]/', '', request()->input('tabla'));
+                    if (empty($tablaSegura)) {
+                        return response()->json(['respuesta' => false, 'mensaje' => 'Nombre de tabla inválido.']);
+                    }
+                    $path  = 'public/crud/' . $tablaSegura . '/';
 
                     $fechaActual = date_create();
                     $nombreUnico = date_timestamp_get($fechaActual);
@@ -663,10 +672,9 @@ class CrudController extends Controller
                 ->where(request()->input('tablaid'), request()->input('id'))
                 ->update($toUpdate);
         }
-        if(env('PRODUCT_REPORT', false)) {
-            if (request()->input('tabla') === 'producto') {
-                event(new ProductAdded());
-                event(new GraficasProyeccion());
+        if (!empty($this->afterStoreCallbacks)) {
+            foreach ($this->afterStoreCallbacks as $callback) {
+                $callback($res, $this->tabla ?? request()->input('tabla'));
             }
         }
 
@@ -710,12 +718,6 @@ class CrudController extends Controller
         }
 
         $data = $query->first();
-
-        if(env('PRODUCT_REPORT', false)) {
-            if (request()->input('tabla') === 'producto') {
-                event(new ProductAdded());
-            }
-        }
 
         return response()->json(['res'=>true, 'datos' => $data]);
     }

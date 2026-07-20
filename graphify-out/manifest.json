@@ -1,0 +1,122 @@
+{
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/webpack.mix.js": {
+    "mtime": 1635889022.8922205,
+    "ast_hash": "79ec5da281800989b3067260c6cb7028",
+    "semantic_hash": "79ec5da281800989b3067260c6cb7028"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/package.json": {
+    "mtime": 1784582183.355107,
+    "ast_hash": "26d765aca8e88576ecf7afd53d01b3bd",
+    "semantic_hash": "26d765aca8e88576ecf7afd53d01b3bd"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/mix-manifest.json": {
+    "mtime": 1668626697.193561,
+    "ast_hash": "abc173d65221930f7c003ceb59d16ca7",
+    "semantic_hash": "abc173d65221930f7c003ceb59d16ca7"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/composer.json": {
+    "mtime": 1625680103.2049654,
+    "ast_hash": "579eb7527359c6119ec913980dabdfb9",
+    "semantic_hash": "579eb7527359c6119ec913980dabdfb9"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/LaravelVueCrudServiceProvider.php": {
+    "mtime": 1611068457.7286081,
+    "ast_hash": "b4db13897ab8400b10d8329422f4cef7",
+    "semantic_hash": "b4db13897ab8400b10d8329422f4cef7"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/CrudController.php": {
+    "mtime": 1625692196.5669491,
+    "ast_hash": "91f9f7369f5704c67c560ae52221bf46",
+    "semantic_hash": "91f9f7369f5704c67c560ae52221bf46"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/summernote-bs4.min.js": {
+    "mtime": 1611079770.80639,
+    "ast_hash": "195c5acf28fdc87031704b438e9349df",
+    "semantic_hash": "195c5acf28fdc87031704b438e9349df"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/bootstrap.js": {
+    "mtime": 1611068457.728895,
+    "ast_hash": "9e756f468cd187b767be5e20b71e03c0",
+    "semantic_hash": "9e756f468cd187b767be5e20b71e03c0"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/app.js": {
+    "mtime": 1625175667.3165822,
+    "ast_hash": "cf11c927bf7649f26268a9639a7aee22",
+    "semantic_hash": "cf11c927bf7649f26268a9639a7aee22"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/Pagination.vue": {
+    "mtime": 1625519425.8269172,
+    "ast_hash": "f0934fb4231c6c32d0e33774f8ba91f7",
+    "semantic_hash": "f0934fb4231c6c32d0e33774f8ba91f7"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/Summernote.js": {
+    "mtime": 1635960689.1025064,
+    "ast_hash": "acbd35e4b283c4d4ed9d1a587403d6a1",
+    "semantic_hash": "acbd35e4b283c4d4ed9d1a587403d6a1"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/ExampleComponent.vue": {
+    "mtime": 1611068457.7292218,
+    "ast_hash": "4f58d3f5cac9f6e6d5d119d1c253660c",
+    "semantic_hash": "4f58d3f5cac9f6e6d5d119d1c253660c"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/CrudComponent.vue": {
+    "mtime": 1635889591.374067,
+    "ast_hash": "0fbfbee13ee76b9413eccc2797b29756",
+    "semantic_hash": "0fbfbee13ee76b9413eccc2797b29756"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/ModalComponent.vue": {
+    "mtime": 1611068457.7292826,
+    "ast_hash": "d2c7b0117eae90136400017d3a139f68",
+    "semantic_hash": "d2c7b0117eae90136400017d3a139f68"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/Datatable.vue": {
+    "mtime": 1625174816.7882059,
+    "ast_hash": "367c9b7b5fb2a7fb394717d10a8c1382",
+    "semantic_hash": "367c9b7b5fb2a7fb394717d10a8c1382"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/Datatableb.vue": {
+    "mtime": 1625177173.1118293,
+    "ast_hash": "536335ac626f64dd319d96342dc0f74f",
+    "semantic_hash": "536335ac626f64dd319d96342dc0f74f"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/resources/js/components/CrudComponentb.vue": {
+    "mtime": 1784582192.2268872,
+    "ast_hash": "aba0ece70cc2cbe2c220e4116827c8bf",
+    "semantic_hash": "aba0ece70cc2cbe2c220e4116827c8bf"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/public/js/app.js": {
+    "mtime": 1784582205.5977833,
+    "ast_hash": "104786fc785b529a9b0d03be5789690e",
+    "semantic_hash": "104786fc785b529a9b0d03be5789690e"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/facades/LaravelVueCrud.php": {
+    "mtime": 1611068457.728694,
+    "ast_hash": "e3ae5b668f6733c2b8fda0d834ae0ec6",
+    "semantic_hash": "e3ae5b668f6733c2b8fda0d834ae0ec6"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/views/layouts/app.blade.php": {
+    "mtime": 1635889609.742379,
+    "ast_hash": "c542e96a8a17c53f11e2644c72593388",
+    "semantic_hash": "c542e96a8a17c53f11e2644c72593388"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/views/crud/index.blade.php": {
+    "mtime": 1625522114.5033681,
+    "ast_hash": "47daaf01ef7dd05b428bf69ce37f85bd",
+    "semantic_hash": "47daaf01ef7dd05b428bf69ce37f85bd"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/src/views/crud/edit.blade.php": {
+    "mtime": 1611068457.7295713,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/.agents/workflows/graphify.md": {
+    "mtime": 1784582598.018823,
+    "ast_hash": "afa1ffc01aa56ac681c7335686f44767",
+    "semantic_hash": "afa1ffc01aa56ac681c7335686f44767"
+  },
+  "/Users/evermolina/Documents/Codigo/www/lacriba/packages/emolinablas/laravel-vue-crud/.agents/rules/graphify.md": {
+    "mtime": 1784582598.0185945,
+    "ast_hash": "f1e53ecc9194573d3c28fc116c743a2e",
+    "semantic_hash": "f1e53ecc9194573d3c28fc116c743a2e"
+  }
+}
