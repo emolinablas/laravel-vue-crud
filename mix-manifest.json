@@ -1,4 +1,7 @@
 {
     "/src/public/js/app.js": "/src/public/js/app.js",
-    "/src/public/css/app.css": "/src/public/css/app.css"
+    "/src/public/css/app.css": "/src/public/css/app.css",
+    "/public/vendor/emolinablas/laravel-vue-crud/css/app.css": "/public/vendor/emolinablas/laravel-vue-crud/css/app.css",
+    "/public/vendor/emolinablas/laravel-vue-crud/js/app.js": "/public/vendor/emolinablas/laravel-vue-crud/js/app.js",
+    "/public/vendor/emolinablas/laravel-vue-crud/js/app.js.LICENSE.txt": "/public/vendor/emolinablas/laravel-vue-crud/js/app.js.LICENSE.txt"
 }
