@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.2] - 2026-08-03
+### Fixed
+- Fix: `npm run dev` fallaba con error de `Progress Plugin` en entornos con `webpack-cli@5` — se fijó `webpack-cli` a `^4.10.0` en `devDependencies` (requerimiento de `laravel-mix@6`)
+
 ## [1.1.1] - 2026-08-03
 ### Fixed
 - Fix: Compatibilidad con PHP 7.4 — se eliminó el tipo de retorno `static` en `onAfterStore()` (requería PHP 8.0+)
