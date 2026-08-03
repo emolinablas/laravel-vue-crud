@@ -103,6 +103,7 @@ Vue.component('VueCropper', VueCropper);
 const files = require.context('../../../../../../resources/js/dynamic-components', true, /\.vue$/i);
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
+Vue.component('crud-component', require('./components/CrudComponent.vue').default);
 Vue.component('crud-componentb', require('./components/CrudComponentb.vue').default);
 
 // Vue.component('principal-crud-component', require('./components/PrincipalCrudComponent.vue').default);

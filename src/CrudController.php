@@ -678,6 +678,19 @@ class CrudController extends Controller
             }
         }
 
+        // Retrocompatibilidad: disparar eventos si PRODUCT_REPORT está activo
+        // y las clases de eventos existen en la app consumidora.
+        if (env('PRODUCT_REPORT', false)) {
+            if (request()->input('tabla') === 'producto') {
+                if (class_exists('\App\Events\ProductAdded')) {
+                    event(new \App\Events\ProductAdded());
+                }
+                if (class_exists('\App\Events\GraficasProyeccion')) {
+                    event(new \App\Events\GraficasProyeccion());
+                }
+            }
+        }
+
         if($res) {
             return response()->json(['respuesta' => true, 'mensaje' =>  'Se guardaron los datos con éxito']);
         } else {
@@ -718,6 +731,15 @@ class CrudController extends Controller
         }
 
         $data = $query->first();
+
+        // Retrocompatibilidad: disparar eventos si PRODUCT_REPORT está activo
+        if (env('PRODUCT_REPORT', false)) {
+            if (request()->input('tabla') === 'producto') {
+                if (class_exists('\App\Events\ProductAdded')) {
+                    event(new \App\Events\ProductAdded());
+                }
+            }
+        }
 
         return response()->json(['res'=>true, 'datos' => $data]);
     }
