@@ -97,11 +97,11 @@ Vue.component('VueCropper', VueCropper);
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-// Registro de componentes dinámicos de la app consumidora.
-// Se omite en la compilación del paquete standalone; la app consumidora
-// debe registrar sus propios componentes en su propio app.js usando:
-//   const files = require.context('./dynamic-components', true, /\.vue$/i)
-//   files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+// Registro automático de componentes dinámicos de la app consumidora.
+// webpack.mix.js crea el directorio stub si no existe (build standalone).
+// En vendor/, este path resuelve a resources/js/dynamic-components de la app.
+const files = require.context('../../../../../../resources/js/dynamic-components', true, /\.vue$/i);
+files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 Vue.component('crud-componentb', require('./components/CrudComponentb.vue').default);
 
