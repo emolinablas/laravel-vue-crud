@@ -6,7 +6,8 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+var _vue = require('vue');
+window.Vue = _vue.default || _vue;
 window.DOMPurify = require('dompurify');
 
 var { BootstrapVue, IconsPlugin } = require('bootstrap-vue');
