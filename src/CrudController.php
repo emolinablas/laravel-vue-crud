@@ -42,7 +42,7 @@ class CrudController extends Controller
     // Callbacks para eventos post-store (reemplaza App\Events hardcodeados)
     private $afterStoreCallbacks = [];
 
-    public function onAfterStore(callable $callback): static
+    public function onAfterStore(callable $callback)
     {
         $this->afterStoreCallbacks[] = $callback;
         return $this;
